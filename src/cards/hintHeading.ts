@@ -16,9 +16,7 @@ const STEP_KEY_PREFIX = 'hints.';
 /** Read a step's text localization, tolerating the legacy flat shape. */
 function textLocalization(step: SolverHintStep): LocalizedHint | undefined {
   const loc = step.localization as
-    | { text?: LocalizedHint; title?: LocalizedHint }
-    | Partial<LocalizedHint>
-    | undefined;
+    { text?: LocalizedHint; title?: LocalizedHint } | Partial<LocalizedHint> | undefined;
   if (!loc) return undefined;
   if ('text' in loc && loc.text?.stringKey) return loc.text;
   if ('stringKey' in loc && loc.stringKey) {
