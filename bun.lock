@@ -6,9 +6,9 @@
       "name": "sudojo_bot",
       "dependencies": {
         "@napi-rs/canvas": "~0.1.100",
-        "@sudobility/sudojo_client": "^0.0.170",
-        "@sudobility/sudojo_types": "^1.2.77",
-        "@sudobility/types": "^1.9.75",
+        "@sudobility/sudojo_client": "^0.0.171",
+        "@sudobility/sudojo_types": "^1.2.78",
+        "@sudobility/types": "^1.9.76",
         "botbuilder": "~4.23.3",
         "botbuilder-dialogs": "~4.23.3",
         "i18next": "~26.5.7",
@@ -315,13 +315,13 @@
 
     "@sinclair/typebox": ["@sinclair/typebox@0.27.12", "", {}, "sha512-hhyNJ+nbR6ZR7pToHvllEFun9TL0sbL+tk/ON75lo+Xas054uez98qRbsuNt7MBCyZKK4+8Yli/OAGZhmfBZ/g=="],
 
-    "@sudobility/di": ["@sudobility/di@1.5.76", "https://npm.pkg.github.com/download/@sudobility/di/1.5.76/250da6bdb52319363d8e300263009d89f78daa47", { "peerDependencies": { "@notifee/react-native": ">=7.0.0", "@react-native-async-storage/async-storage": ">=1.19.0", "@react-native-community/netinfo": ">=9.0.0", "@react-native-firebase/analytics": ">=18.0.0", "@react-native-firebase/app": ">=18.0.0", "@react-native-firebase/messaging": ">=18.0.0", "@sudobility/types": "^1.9.75", "firebase": ">=11.0.0", "react": ">=18.0.0", "react-native": ">=0.70.0" } }, "sha512-a97vPvztD36ZIPXPkQCgXgvpyQAlQQGeu2vEhgnsmn3LhPikcJFK77NMrxr0BHLY+/RgbacgkyrGOWBDPt+LUg=="],
+    "@sudobility/di": ["@sudobility/di@1.5.77", "https://npm.pkg.github.com/download/@sudobility/di/1.5.77/6b39975a9755834aa804ce8de32d310f0d08f04c", { "peerDependencies": { "@notifee/react-native": ">=7.0.0", "@react-native-async-storage/async-storage": ">=1.19.0", "@react-native-community/netinfo": ">=9.0.0", "@react-native-firebase/analytics": ">=18.0.0", "@react-native-firebase/app": ">=18.0.0", "@react-native-firebase/messaging": ">=18.0.0", "@sudobility/types": "^1.9.76", "firebase": ">=11.0.0", "react": ">=18.0.0", "react-native": ">=0.70.0" } }, "sha512-jlG+pmPgy/kOF3uwr3uNLxaCm8WoH/4XEAJoG308c1NOTleuLSiM3fUMwd3OUmULPmqqyXByGjnyuiw/VUhdQQ=="],
 
-    "@sudobility/sudojo_client": ["@sudobility/sudojo_client@0.0.170", "https://npm.pkg.github.com/download/@sudobility/sudojo_client/0.0.170/158d378c520de4444d2b7ffc0312eff72956731c", { "peerDependencies": { "@sudobility/di": "^1.5.76", "@sudobility/sudojo_types": "^1.2.77", "@sudobility/types": "^1.9.75", "@tanstack/react-query": ">=5.0.0", "react": ">=18.0.0" } }, "sha512-3IEBIY8HTM1tXFLvhIzlQee3F4fy1zpg07QnUkY+GzDggN69K7qeXbA1sMdxFES/dpfetTaBtk/zyxfwT6xMIQ=="],
+    "@sudobility/sudojo_client": ["@sudobility/sudojo_client@0.0.171", "https://npm.pkg.github.com/download/@sudobility/sudojo_client/0.0.171/385249b7638a1186a770a37b7b41ec4980166aa1", { "peerDependencies": { "@sudobility/di": "^1.5.77", "@sudobility/sudojo_types": "^1.2.78", "@sudobility/types": "^1.9.76", "@tanstack/react-query": ">=5.0.0", "react": ">=18.0.0" } }, "sha512-MerpkKRj00v/LKXV5PBPGCAig3fzqi8ufNLKv0e1NeI2s4CveXjuukJtUBgcmAiRnUKUmQ8lpxoUPDwch7nj7A=="],
 
-    "@sudobility/sudojo_types": ["@sudobility/sudojo_types@1.2.77", "https://npm.pkg.github.com/download/@sudobility/sudojo_types/1.2.77/8eca13db4f2d88263cf8cd6c0c06b6920d96f461", { "peerDependencies": { "@sudobility/types": "^1.9.75" } }, "sha512-OD3j1wZbHY7eoyaQ/RLSPo04q1HBY6YZkA1/gxRIGWg/KeWTOTd2onIP+7GtUJv+/LxsJzqkvXtbSK7sWNusUA=="],
+    "@sudobility/sudojo_types": ["@sudobility/sudojo_types@1.2.78", "https://npm.pkg.github.com/download/@sudobility/sudojo_types/1.2.78/9dbe749c93994da9029b7f6d65ffcca2a4b1c28e", { "peerDependencies": { "@sudobility/types": "^1.9.76" } }, "sha512-uMyWyXhRc6Ms66HmxcWAj7LZT5WhvOPJKBLFyEwxSquDOvuFVXPPae3mCZ5o+c0JOX11WjOli4RHK7wuAgdKFw=="],
 
-    "@sudobility/types": ["@sudobility/types@1.9.75", "https://npm.pkg.github.com/download/@sudobility/types/1.9.75/d041222e1a9c48b1857a25686361fa493265e572", {}, "sha512-c0IqHhNsyMxWFzv+sC8drTXid1s/yberzme5JJTYIR2CE+DxpnjFCyL0AIMKUwTQYhYKvRZG0JkWRFplirbBrw=="],
+    "@sudobility/types": ["@sudobility/types@1.9.76", "https://npm.pkg.github.com/download/@sudobility/types/1.9.76/71635156f72fd9461107d5f147b3dc1c49f863d0", {}, "sha512-b7maZHR5wM84VlQ+l9R+2guzSOrExog6OUNy1oCe7h0abW13syycmnLQL0g+qql0aQ84qTB4A0mJelhY3Vef4Q=="],
 
     "@tanstack/query-core": ["@tanstack/query-core@5.104.5", "", {}, "sha512-Q94gI8Opd+CbdVNOdj8ZCyV8WqLYitrDq1t96Xc8WZT6lY0r5iRnJLXYDxMex7EEf2v+mXvn4FcjaBKSxXZQ9A=="],
 
@@ -1276,6 +1276,8 @@
     "spdy-transport/readable-stream": ["readable-stream@3.6.2", "", { "dependencies": { "inherits": "^2.0.3", "string_decoder": "^1.1.1", "util-deprecate": "^1.0.1" } }, "sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA=="],
 
     "terser/commander": ["commander@2.20.3", "", {}, "sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ=="],
+
+    "verror/extsprintf": ["extsprintf@1.4.1", "", {}, "sha512-Wrk35e8ydCKDj/ArClo1VrPVmN8zph5V4AtHwIuHhvMXsKf73UT3BOD+azBIW+3wOJ4FhEH7zyaJCFvChjYvMA=="],
 
     "@azure/identity/@azure/msal-node/@azure/msal-common": ["@azure/msal-common@16.14.1", "", {}, "sha512-Or6xhPNyi4zHW25158yxBoyxuCqNSPa5YBVqfF1J5Ks4MJWBo/USXdp05DQIPu1Zli00YZu6t0+h6KvHJealxQ=="],
 
