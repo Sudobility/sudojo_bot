@@ -1,6 +1,6 @@
 {
   "name": "sudojo_bot",
-  "version": "1.0.63",
+  "version": "1.0.64",
   "description": "Microsoft Bot Framework bot for Sudoku hints",
   "main": "dist/index.js",
   "type": "module",
