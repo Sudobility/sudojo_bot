@@ -15,8 +15,14 @@ WORKDIR /app
 # Copy package files
 COPY package.json bun.lock ./
 
-# Install all dependencies (including devDependencies for build)
-RUN bun install --frozen-lockfile
+# Install all dependencies (including devDependencies for build).
+# @sudobility packages live on GitHub Packages; route the scope there with the
+# GH_PACKAGES_TOKEN build-arg the shared workflow passes. Other deps use public npmjs.
+ARG GH_PACKAGES_TOKEN
+RUN echo "@sudobility:registry=https://npm.pkg.github.com" > ~/.npmrc && \
+    echo "//npm.pkg.github.com/:_authToken=${GH_PACKAGES_TOKEN}" >> ~/.npmrc && \
+    bun install --frozen-lockfile && \
+    rm -f ~/.npmrc
 
 # -----------------------------------------------------------------------------
 # Stage 2: Build TypeScript
@@ -54,7 +60,11 @@ RUN addgroup --system --gid 1001 nodejs && \
 
 # Copy production dependencies only
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile --production && \
+ARG GH_PACKAGES_TOKEN
+RUN echo "@sudobility:registry=https://npm.pkg.github.com" > ~/.npmrc && \
+    echo "//npm.pkg.github.com/:_authToken=${GH_PACKAGES_TOKEN}" >> ~/.npmrc && \
+    bun install --frozen-lockfile --production && \
+    rm -f ~/.npmrc && \
     rm -rf ~/.bun/install/cache
 
 # Copy built application
