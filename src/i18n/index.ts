@@ -4,6 +4,7 @@
  */
 
 import i18next from 'i18next';
+import type { InitOptions } from 'i18next';
 import en from './locales/en.json' with { type: 'json' };
 // Per-step hint headings, synced from sudojo_app (`bun run sync:hint-headings`).
 import enHeadings from './locales/en.headings.json' with { type: 'json' };
@@ -25,7 +26,7 @@ i18next.init({
       [HEADINGS_NS]: enHeadings,
     },
   },
-});
+} as InitOptions);
 
 export const t = i18next.t.bind(i18next);
 export default i18next;

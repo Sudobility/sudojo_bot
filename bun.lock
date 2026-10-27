@@ -6,7 +6,7 @@
       "name": "sudojo_bot",
       "dependencies": {
         "@napi-rs/canvas": "~0.1.100",
-        "@sudobility/sudojo_client": "^0.0.172",
+        "@sudobility/sudojo_client": "^0.0.175",
         "@sudobility/sudojo_types": "^1.2.79",
         "@sudobility/types": "^1.9.76",
         "botbuilder": "~4.23.3",
@@ -317,7 +317,7 @@
 
     "@sudobility/di": ["@sudobility/di@1.5.79", "https://npm.pkg.github.com/download/@sudobility/di/1.5.79/1035c3304c3dc33d7b5b38b38ba6d6fe8c3dbd60", { "peerDependencies": { "@notifee/react-native": ">=7.0.0", "@react-native-async-storage/async-storage": ">=1.19.0", "@react-native-community/netinfo": ">=9.0.0", "@react-native-firebase/analytics": ">=18.0.0", "@react-native-firebase/app": ">=18.0.0", "@react-native-firebase/messaging": ">=18.0.0", "@sudobility/types": "^1.9.76", "firebase": ">=11.0.0", "react": ">=18.0.0", "react-native": ">=0.70.0" } }, "sha512-2y+YqxNN7lhrbtwKGPKemf/jOJ7RKj8Jm3+9cnSKtiaRf7M2MIEiXQCsF1pF2M6SerzwsUfFbYDVQkfl6qWbzA=="],
 
-    "@sudobility/sudojo_client": ["@sudobility/sudojo_client@0.0.172", "https://npm.pkg.github.com/download/@sudobility/sudojo_client/0.0.172/722d82703cd0e1edeadebb458143daa845db0596", { "peerDependencies": { "@sudobility/di": "^1.5.79", "@sudobility/sudojo_types": "^1.2.79", "@sudobility/types": "^1.9.76", "@tanstack/react-query": ">=5.0.0", "react": ">=18.0.0" } }, "sha512-eUJS9A5Pze33sTUAUCgRiyjl8X8o2PDww2+mLOjUJKsBRSgTKdQiqXkGGZHwa9f9+Otgp6Rm+OuLTo6a0/SV6Q=="],
+    "@sudobility/sudojo_client": ["@sudobility/sudojo_client@0.0.175", "https://npm.pkg.github.com/download/@sudobility/sudojo_client/0.0.175/170838fd51317ac7dadc02f3a2de6381229c3e31", { "peerDependencies": { "@sudobility/di": "^1.5.82", "@sudobility/sudojo_types": "^1.2.79", "@sudobility/types": "^1.9.76", "@tanstack/react-query": ">=5.0.0", "react": ">=18.0.0" } }, "sha512-gWxMz9b8sgbzLuwJzd1y8HFCoGtDF9W0SeNLcMrWv1GMUlNIDQhWIapvmPcGqP4hh3O9PQigzUV55TBYAPH1eQ=="],
 
     "@sudobility/sudojo_types": ["@sudobility/sudojo_types@1.2.79", "https://npm.pkg.github.com/download/@sudobility/sudojo_types/1.2.79/69c964c236525ab5d74a31f6aef5ff63037495a3", { "peerDependencies": { "@sudobility/types": "^1.9.76" } }, "sha512-k8x+kjxc0XHXpDxGhI3ab1g9YMTvL+SRlSEE2MbPehFzZnCzWW5bP8l6u8ys5V2HULzMq+IfzWQ4e0Rf9GoCGg=="],
 
