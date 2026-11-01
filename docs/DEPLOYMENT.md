@@ -7,11 +7,18 @@ This document provides detailed instructions for deploying Sudojo Bot to various
 - [Prerequisites](#prerequisites)
 - [Docker Deployment](#docker-deployment)
 - [Platform-Specific Setup](#platform-specific-setup)
+  - [How Bot Framework channels work](#how-bot-framework-channels-work)
+  - [SingleTenant vs MultiTenant](#singletenant-vs-multitenant)
+  - [Channel capability matrix](#channel-capability-matrix)
   - [Microsoft Teams](#microsoft-teams)
   - [Azure Web Chat](#azure-web-chat)
   - [Slack](#slack)
   - [Facebook Messenger](#facebook-messenger)
   - [Telegram](#telegram)
+  - [Email (Microsoft 365)](#email-microsoft-365)
+  - [Twilio (SMS / MMS)](#twilio-sms--mms)
+  - [LINE](#line)
+  - [GroupMe](#groupme)
   - [Direct Line (Custom Apps)](#direct-line-custom-apps)
 - [Production Deployment with Traefik](#production-deployment-with-traefik)
 - [Environment Variables Reference](#environment-variables-reference)
@@ -94,6 +101,125 @@ docker push docker.io/yourusername/sudojo_bot:latest
 
 ## Platform-Specific Setup
 
+### How Bot Framework channels work
+
+You deploy **one** bot, with **one** messaging endpoint:
+
+```
+https://bot.sudojo.com/api/messages
+```
+
+You do **not** deploy a separate copy per platform. Azure Bot Service sits in the middle and
+fans out to every platform you enable:
+
+```
+                              ┌───────────────────────────── Microsoft Teams
+   Facebook / Telegram /      │
+   Slack / LINE / SMS user    │   each platform talks to Azure's
+            │                 │   channel connector, e.g.
+            ▼                 │     facebook.botframework.com
+   platform's own servers ────┤     telegram.botframework.com
+            │                 │     slack.botframework.com
+            ▼                 │
+   Azure Bot Service  ────────┤   Azure then calls YOUR single endpoint:
+   (Channels blade)           └──► https://bot.sudojo.com/api/messages ──► container
+```
+
+What this means in practice:
+
+1. **Your server only ever exposes `https://bot.sudojo.com/api/messages`.** Traefik routes it to
+   the container (see [Production Deployment with Traefik](#production-deployment-with-traefik)).
+   You never open a port or webhook per platform.
+2. **Each platform's webhook points at a Microsoft URL** (e.g. `https://facebook.botframework.com/...`),
+   **not** at `bot.sudojo.com`. Azure hands you that URL in the channel's config blade.
+3. **To add a platform you do two things:** (a) register an app/bot on that platform and copy its
+   credentials, (b) paste those credentials into **Azure Portal → your Bot → Channels → [platform]**.
+4. **`MICROSOFT_APP_TYPE` matters for reach.** A `SingleTenant` app only authenticates against your
+   own Azure AD tenant — fine for Teams inside your org, but public channels (Facebook, Telegram,
+   Slack, web) generally need a **`MultiTenant`** app registration. If you intend to serve the public
+   internet, create the Azure Bot with a MultiTenant app ID (and leave `MICROSOFT_APP_TENANT_ID`
+   unset / `common`) rather than SingleTenant.
+
+So the prerequisite for every section below is the same: the **[Azure Bot registration](#step-1-create-azure-bot-registration)**
+and a **running deployment at `https://bot.sudojo.com/api/messages`**. Do that once, then enable
+channels.
+
+### SingleTenant vs MultiTenant
+
+`MICROSOFT_APP_TYPE` controls **which Azure AD directories Microsoft will issue auth tokens for**
+when Azure Bot Service talks to your container (and when your bot calls back out, e.g. to download a
+Teams image). It must match the **Supported account types** on the app registration itself — the env
+var alone is not enough.
+
+| | `SingleTenant` | `MultiTenant` |
+|---|---|---|
+| Valid in | **one** tenant (yours) | **any** Azure AD tenant |
+| Token authority | `login.microsoftonline.com/<tenant-id>` | `login.microsoftonline.com/botframework.com` |
+| `MICROSOFT_APP_TENANT_ID` | **required** | **not used** (omit it) |
+| Use for | an in-org Teams bot | **public channels** (Facebook, Telegram, Slack, public Web Chat) |
+
+Public channels route through Microsoft's shared `botframework.com` tenant, so a public bot needs
+**MultiTenant**. **Neither type costs anything** — tenancy has no effect on
+[Azure Bot Service pricing](https://azure.microsoft.com/pricing/details/bot-services/) (billed by
+channel + message volume; Standard channels like Teams/Facebook/Telegram/Slack are free, only
+Direct Line / Web Chat have a paid quota). App registrations are always free.
+
+> **Mismatch = silent auth failure.** If the app registration is SingleTenant but the env says
+> MultiTenant (or vice-versa), the token request fails and the bot returns 401s / "not responding."
+
+#### Switching an existing bot to MultiTenant
+
+1. In `.env` (and Doppler) set `MICROSOFT_APP_TYPE=MultiTenant` and **remove** `MICROSOFT_APP_TENANT_ID`.
+2. **Entra ID → App registrations →** open your app (the `MICROSOFT_APP_ID`).
+3. **Authentication → Supported account types →** select **"Accounts in any organizational directory
+   (Any Microsoft Entra ID tenant — Multitenant)"** → **Save**.
+4. Confirm **Azure Bot → Configuration** still points its messaging endpoint at
+   `https://bot.sudojo.com/api/messages`, then redeploy / restart the container so it picks up the
+   new env.
+
+**Fallback if step 3 is greyed out or errors** (can happen depending on how the app was created):
+create a **new** MultiTenant app registration → add a new **client secret** → point the Azure Bot at
+the new App ID → update `MICROSOFT_APP_ID` and `MICROSOFT_APP_PASSWORD` in Doppler. (Keeping the same
+app registration is the only way to keep the same secret.)
+
+### Channel capability matrix
+
+This bot is **image-first and button-driven**: the user uploads a photo, and the bot replies with
+Adaptive Cards that embed a rendered PNG board plus `Action.Submit` buttons (`Get Hint`, `Next`,
+`Apply`, `New Puzzle`, …). Channels render Adaptive Cards with very different fidelity — Microsoft's
+[Channels reference](https://learn.microsoft.com/en-us/azure/bot-service/bot-service-channels-reference)
+spells out that cards may be **down-rendered to a static image or to plain text**, and that a channel
+"might not display the card if the card contains inputs or buttons."
+
+| Channel | User can send a photo? | Adaptive Cards + buttons? | Experience |
+|---------|------------------------|---------------------------|------------|
+| **Microsoft Teams** | ✅ (file upload) | ✅ Full | **Best** — the primary target |
+| **Web Chat / Direct Line** | ✅ | ✅ Full | **Best** — full card + button fidelity |
+| **Slack** | ✅ | ⚠️ Card rendered **as an image**; buttons degrade | Usable; prefer text commands |
+| **Facebook Messenger** | ✅ | ⚠️ Partial / down-rendered | Usable; prefer text commands |
+| **Telegram** | ✅ | ⚠️ "Image, partial" — buttons may not render | Usable; prefer text commands |
+| **LINE** | ✅ | ⚠️ Partial | Usable; prefer text commands |
+| **Email (M365)** | ✅ (attachment) | ⚠️ Down-rendered | Degraded, high latency |
+| **Twilio (SMS/MMS)** | ✅ MMS only | ❌ No cards | Text + image only |
+
+**The good news:** the bot accepts **text commands for every action except "previous step"**, so it
+still works on channels where buttons don't render. On a degraded channel, tell users they can type:
+
+| Type this | Does |
+|-----------|------|
+| *(send a photo)* | upload a puzzle |
+| `hint` | get / show the current hint step |
+| `next` | next step |
+| `apply` | apply the current hint |
+| `status` | show progress |
+| `new` | start over |
+| `help` | show help |
+
+> Always **test every card your bot sends on each channel before launch** — Microsoft's own advice.
+> Buttons that work in Teams/Web Chat may silently drop on Telegram or Facebook.
+
+---
+
 ### Microsoft Teams
 
 Microsoft Teams is the primary deployment target and offers the richest experience.
@@ -119,7 +245,7 @@ Microsoft Teams is the primary deployment target and offers the richest experien
 5. Copy the secret value immediately (shown only once)
 6. Back in Bot Configuration, set **Messaging endpoint**:
    ```
-   https://your-domain.com/api/messages
+   https://bot.sudojo.com/api/messages
    ```
 
 #### Step 3: Enable Teams Channel
@@ -194,7 +320,7 @@ Create `manifest.json`:
     }
   ],
   "permissions": ["identity", "messageTeamMembers"],
-  "validDomains": ["your-domain.com"]
+  "validDomains": ["bot.sudojo.com"]
 }
 ```
 
@@ -357,6 +483,96 @@ Search for your bot on Telegram and start chatting.
 
 Telegram has a 20MB file size limit. Ensure puzzle images are optimized.
 
+Telegram down-renders Adaptive Cards ("image, partial") and **may drop the inline buttons**. Tell
+users they can drive the bot with the text commands in the
+[capability matrix](#channel-capability-matrix) (`hint`, `next`, `apply`, `status`, `new`).
+
+---
+
+### Email (Microsoft 365)
+
+Lets users interact with the bot over email. Rich cards are heavily down-rendered and round-trips are
+slow, so this is a fallback channel — expect the text-command experience.
+
+1. Have a dedicated **Microsoft 365 mailbox** for the bot (e.g. `sudojo-bot@yourtenant.com`).
+2. Azure Bot → **Channels** → **Email (Office 365)**.
+3. Enter the mailbox address and authenticate (modern auth / the mailbox credentials, per the blade).
+4. Click **Apply**. Users email the mailbox; attachments (puzzle photos) arrive as image attachments.
+
+See [Connect a bot to Email](https://learn.microsoft.com/en-us/azure/bot-service/bot-service-channel-connect-email).
+
+---
+
+### Twilio (SMS / MMS)
+
+Text + picture messaging. **No Adaptive Cards** — the bot's cards collapse to text, and the board
+image only shows where **MMS** is supported. Users send a puzzle photo as an MMS and drive the bot
+entirely with text commands.
+
+#### Step 1: Twilio setup
+
+1. Create a [Twilio](https://www.twilio.com) account and buy / provision an **MMS-capable** number.
+2. From the Twilio console, note the **Account SID** and **Auth Token**.
+
+#### Step 2: Configure Azure Bot
+
+1. Azure Bot → **Channels** → **Twilio SMS**.
+2. Enter the **Phone Number**, **Account SID**, and **Auth Token**.
+3. Copy the Bot Framework **messaging endpoint** that Azure shows and set it as the webhook on your
+   Twilio number's Messaging configuration.
+4. Click **Apply**.
+
+See [Connect a bot to Twilio](https://learn.microsoft.com/en-us/azure/bot-service/bot-service-channel-connect-twilio).
+
+> MMS size and region rules vary by carrier; keep puzzle images small. Where only SMS (no MMS) is
+> available, users cannot send a photo and the bot can't receive a puzzle.
+
+---
+
+### LINE
+
+Popular in Japan / Taiwan / Thailand. Supports image upload; Adaptive Cards are partially rendered,
+so prefer text commands for actions.
+
+#### Step 1: LINE Developers setup
+
+1. In the [LINE Developers Console](https://developers.line.biz), create a **Provider** and a
+   **Messaging API channel**.
+2. Note the **Channel secret** and issue a **Channel access token**.
+
+#### Step 2: Configure Azure Bot
+
+1. Azure Bot → **Channels** → **LINE**.
+2. Enter the **Channel secret** and **Channel access token**.
+3. Copy the **Webhook URL** Azure provides and paste it into the LINE channel's **Webhook settings**;
+   enable "Use webhook".
+4. Click **Apply**.
+
+See [Connect a bot to LINE](https://learn.microsoft.com/en-us/azure/bot-service/bot-service-channel-connect-line).
+
+---
+
+### GroupMe
+
+Group-chat platform. Image upload works; cards are down-rendered.
+
+1. Register an application in the [GroupMe developer portal](https://dev.groupme.com) and create a bot.
+2. Azure Bot → **Channels** → **GroupMe**.
+3. Enter the GroupMe app's **Client ID** / **access token** as prompted, and copy Azure's callback
+   URL back into the GroupMe app's **Callback URL**.
+4. Click **Apply**.
+
+See [Connect a bot to GroupMe](https://learn.microsoft.com/en-us/azure/bot-service/bot-service-channel-connect-groupme).
+
+---
+
+### Deprecated / unavailable channels
+
+Microsoft has **retired new-bot support for Skype, Kik, and Cortana**, and Microsoft Teams is now a
+separate product surface (covered above). Don't plan new deployments on those. For anything not
+listed here (a custom mobile/web app, WhatsApp via a partner, kiosks, etc.), use
+[Direct Line](#direct-line-custom-apps).
+
 ---
 
 ### Direct Line (Custom Apps)
@@ -417,10 +633,13 @@ This deployment method is compatible with `sudobility_dockerized` scripts.
    PORT=3978
    MICROSOFT_APP_ID=your-app-id
    MICROSOFT_APP_PASSWORD=your-secret
-   MICROSOFT_APP_TYPE=SingleTenant
-   MICROSOFT_APP_TENANT_ID=your-tenant-id
+   MICROSOFT_APP_TYPE=MultiTenant
    SOLVER_API_URL=https://api.sudojo.com
    ```
+   > Use `MultiTenant` for a public bot (Facebook, Telegram, Slack, public Web Chat) and **omit**
+   > `MICROSOFT_APP_TENANT_ID`. Use `SingleTenant` **plus** `MICROSOFT_APP_TENANT_ID=<your-tenant-id>`
+   > only for an in-org Teams bot. This must match the app registration's **Supported account types**
+   > in Azure AD — see [How Bot Framework channels work](#how-bot-framework-channels-work).
 3. Generate Service Token for production environment
 
 ### Step 2: Deploy Service
@@ -435,7 +654,7 @@ cd ~/shapeshyft/sudobility_dockerized
 When prompted:
 - **Service name**: `sudojo_bot`
 - **Hostname**: `bot.sudojo.com` (your domain)
-- **Docker image**: `docker.io/yourusername/sudojo_bot:latest`
+- **Docker image**: `docker.io/johnqh/sudojo_bot:latest`
 - **Health endpoint**: Select "1" for `/health`
 - **Doppler token**: Paste your service token
 
@@ -523,7 +742,7 @@ sudobility_dockerized/
 
 2. **Verify health endpoint**:
    ```bash
-   curl -v https://your-domain.com/health
+   curl -v https://bot.sudojo.com/health
    ```
 
 3. **Check Azure Bot Configuration**:
@@ -565,7 +784,7 @@ sudobility_dockerized/
 
 2. **Verify DNS**:
    ```bash
-   dig +short your-domain.com
+   dig +short bot.sudojo.com
    ```
 
 3. **Force certificate renewal**:
