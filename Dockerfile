@@ -46,10 +46,12 @@ RUN bun run build
 # -----------------------------------------------------------------------------
 FROM oven/bun:1-slim AS production
 
-# Install curl for health checks and ca-certificates for HTTPS
+# Install curl for health checks, ca-certificates for HTTPS, and adduser for the
+# addgroup/adduser commands (not preinstalled in Debian trixie slim).
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
+    adduser \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
