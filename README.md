@@ -4,6 +4,10 @@ Microsoft Bot Framework chatbot that helps users solve Sudoku puzzles through im
 
 ## Setup
 
+The `@sudobility/*` dependencies live on GitHub Packages (see `.npmrc`), so `bun install`
+needs a GitHub token with `read:packages`. Add it to `~/.npmrc` before installing:
+`//npm.pkg.github.com/:_authToken=<token>`.
+
 ```bash
 bun install
 cp .env.example .env
@@ -43,7 +47,7 @@ bun run build        # TypeScript compilation
 bun run typecheck    # Type checking
 bun run lint         # ESLint
 bun run format       # Prettier (writes src/)
-bun run test         # All tests (fast, offline)
+bun run test:unit    # All tests (fast, offline) — same as `bun test`
 ```
 
 ## Docker
