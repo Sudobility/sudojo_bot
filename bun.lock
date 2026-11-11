@@ -6,9 +6,9 @@
       "name": "sudojo_bot",
       "dependencies": {
         "@napi-rs/canvas": "~0.1.100",
-        "@sudobility/sudojo_client": "^0.0.179",
-        "@sudobility/sudojo_types": "^1.2.81",
-        "@sudobility/types": "^1.9.79",
+        "@sudobility/sudojo_client": "^0.0.180",
+        "@sudobility/sudojo_types": "^1.2.82",
+        "@sudobility/types": "^1.10.1",
         "botbuilder": "~4.23.3",
         "botbuilder-dialogs": "~4.23.3",
         "i18next": "~26.5.7",
@@ -317,11 +317,11 @@
 
     "@sudobility/di": ["@sudobility/di@1.5.79", "https://npm.pkg.github.com/download/@sudobility/di/1.5.79/1035c3304c3dc33d7b5b38b38ba6d6fe8c3dbd60", { "peerDependencies": { "@notifee/react-native": ">=7.0.0", "@react-native-async-storage/async-storage": ">=1.19.0", "@react-native-community/netinfo": ">=9.0.0", "@react-native-firebase/analytics": ">=18.0.0", "@react-native-firebase/app": ">=18.0.0", "@react-native-firebase/messaging": ">=18.0.0", "@sudobility/types": "^1.9.76", "firebase": ">=11.0.0", "react": ">=18.0.0", "react-native": ">=0.70.0" } }, "sha512-2y+YqxNN7lhrbtwKGPKemf/jOJ7RKj8Jm3+9cnSKtiaRf7M2MIEiXQCsF1pF2M6SerzwsUfFbYDVQkfl6qWbzA=="],
 
-    "@sudobility/sudojo_client": ["@sudobility/sudojo_client@0.0.179", "https://npm.pkg.github.com/download/@sudobility/sudojo_client/0.0.179/94cfe1b11a34ddf49c1147aa83044b6468679a57", { "peerDependencies": { "@sudobility/di": "^1.5.86", "@sudobility/sudojo_types": "^1.2.81", "@sudobility/types": "^1.9.79", "@tanstack/react-query": ">=5.0.0", "react": ">=18.0.0" } }, "sha512-RakeCdMzdCI/bdJyBsOQ767y05n4Etfyy/8H5KXiGFR8pyK6asgQswZY3bSWgMaJ5eUFbcdIR/voH3PI4dHDYg=="],
+    "@sudobility/sudojo_client": ["@sudobility/sudojo_client@0.0.180", "https://npm.pkg.github.com/download/@sudobility/sudojo_client/0.0.180/edb674a55bf1b803c8bffc11e2f5f23924c51094", { "peerDependencies": { "@sudobility/di": "^1.5.87", "@sudobility/sudojo_types": "^1.2.82", "@sudobility/types": "^1.10.1", "@tanstack/react-query": ">=5.0.0", "react": ">=18.0.0" } }, "sha512-U8VQmL4Hl4N2itj6hxjiUOtEobDxqUxfRZ3s4n+WvJX/43KjZM0+i/fUsYI+6BtNaBixqjYR1wqaBcyw55g/uQ=="],
 
-    "@sudobility/sudojo_types": ["@sudobility/sudojo_types@1.2.81", "https://npm.pkg.github.com/download/@sudobility/sudojo_types/1.2.81/d2b3c122198e4fe86d6abecaab8f2126fe07f00a", { "peerDependencies": { "@sudobility/types": "^1.9.79" } }, "sha512-i1b+an8HyFjAue6mN4zzSSuJ+KhouoeRAfilFXEFnJecdiexirCWcpBufIHRa8bgk+Gi/cGNik7AoUn20fEiVQ=="],
+    "@sudobility/sudojo_types": ["@sudobility/sudojo_types@1.2.82", "https://npm.pkg.github.com/download/@sudobility/sudojo_types/1.2.82/ee6305d41c0ee84e98ebc9df5e2b049eef138ede", { "peerDependencies": { "@sudobility/types": "^1.10.1" } }, "sha512-Hmg1fWPJ4UTIzzogie9IayZFyr9iKL1aU2Bn5Z7DZ46GfiaKS8FpVTXtWYmQNyG1uDd9/tQAQCfhr0htvdpRFA=="],
 
-    "@sudobility/types": ["@sudobility/types@1.9.79", "https://npm.pkg.github.com/download/@sudobility/types/1.9.79/59975e39d6ab7e215418a489ef3cfe214b7521f4", {}, "sha512-rRtDT++fVy+I1m6E31fq752lxCQytFzwfqpJe5wDMPLcC1rJOBa7v+4+5e3cmX8VV1CsuLg8PTLMFe6A7AELRQ=="],
+    "@sudobility/types": ["@sudobility/types@1.10.1", "https://npm.pkg.github.com/download/@sudobility/types/1.10.1/8e353f55822e0bc3fa9555dfe3aee593e140c012", {}, "sha512-LmJyjDDY5rHDET1wstkT0i59SSOrOXijL2iqrgfcK6VHtKcBEw7FFpbw4CyHn+dhR9kqkYpEydSfypoqw7crMg=="],
 
     "@tanstack/query-core": ["@tanstack/query-core@5.104.5", "", {}, "sha512-Q94gI8Opd+CbdVNOdj8ZCyV8WqLYitrDq1t96Xc8WZT6lY0r5iRnJLXYDxMex7EEf2v+mXvn4FcjaBKSxXZQ9A=="],
 
