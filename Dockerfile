@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 # =============================================================================
 # Sudojo Bot - Multi-stage Docker Build
 # Compatible with sudobility_dockerized deployment scripts
@@ -17,10 +15,12 @@ COPY package.json bun.lock ./
 
 # Install all dependencies (including devDependencies for build).
 # @sudobility packages live on GitHub Packages; route the scope there with the
-# GH_PACKAGES_TOKEN build-arg the shared workflow passes. Other deps use public npmjs.
-ARG GH_PACKAGES_TOKEN
-RUN echo "@sudobility:registry=https://npm.pkg.github.com" > ~/.npmrc && \
-    echo "//npm.pkg.github.com/:_authToken=${GH_PACKAGES_TOKEN}" >> ~/.npmrc && \
+# token the shared workflow passes as a BuildKit SECRET (never a build-arg or an
+# image layer). Other deps use public npmjs. Locally:
+#   docker build --secret id=gh_packages_token,env=GH_PACKAGES_READ_TOKEN
+RUN --mount=type=secret,id=gh_packages_token \
+    printf '@sudobility:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=%s\n' \
+      "$(cat /run/secrets/gh_packages_token)" > ~/.npmrc && \
     bun install --frozen-lockfile && \
     rm -f ~/.npmrc
 
@@ -60,11 +60,11 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 botuser
 
-# Copy production dependencies only
+# Copy production dependencies only (token via BuildKit secret; see above).
 COPY package.json bun.lock ./
-ARG GH_PACKAGES_TOKEN
-RUN echo "@sudobility:registry=https://npm.pkg.github.com" > ~/.npmrc && \
-    echo "//npm.pkg.github.com/:_authToken=${GH_PACKAGES_TOKEN}" >> ~/.npmrc && \
+RUN --mount=type=secret,id=gh_packages_token \
+    printf '@sudobility:registry=https://npm.pkg.github.com\n//npm.pkg.github.com/:_authToken=%s\n' \
+      "$(cat /run/secrets/gh_packages_token)" > ~/.npmrc && \
     bun install --frozen-lockfile --production && \
     rm -f ~/.npmrc && \
     rm -rf ~/.bun/install/cache
