@@ -6,8 +6,12 @@
  * JSON in, JSON out, with an AbortController timeout.
  */
 
-import { NetworkError } from '@sudobility/types';
-import type { NetworkClient, NetworkRequestOptions, NetworkResponse } from '@sudobility/types';
+import {
+  NetworkError,
+  type NetworkClient,
+  type NetworkRequestOptions,
+  type NetworkResponse,
+} from '@sudobility/types';
 
 const DEFAULT_TIMEOUT_MS = 30000;
 
